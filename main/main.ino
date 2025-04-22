@@ -6,9 +6,11 @@ void setup() {
 }
 
 void loop() {
-  write(12, HIGH);
+  digital_write(12, HIGH);
   delay(1000);
-  write(12, LOW);
+  digital_write(12, LOW);
   delay(1000);
+
+  analogWrite
 }
 
