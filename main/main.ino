@@ -1,16 +1,14 @@
 #include "Constants.h"
 #include "GPIO.h"
+#include "Stepper.h"
+
+// steps_per_revolution, blue_wire, pink_wire, yellow_wire, orange_wire
+Stepper stepper = Stepper(2048, 4, 5, 6, 7);
 
 void setup() {
-  set_pinmode(12, OUTPUT);
 }
 
 void loop() {
-  digital_write(12, HIGH);
-  delay(1000);
-  digital_write(12, LOW);
-  delay(1000);
-
-  analogWrite
+  stepper.rotate(1);
 }
 
