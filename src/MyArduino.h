@@ -8,7 +8,7 @@
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 #define sbi(reg, bit) (reg |= (0x01 << bit))
 #define cbi(reg, bit) (reg &= ~(0x01 << bit))
-#define clockCyclesToMicroseconds(cycles) (cycles * (1/F_CPU))
+#define clockCyclesToMicroseconds(cycles) (cycles / (F_CPU / 1000000L))
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 // GENERAL DEFINITIONS
@@ -21,7 +21,7 @@
 #define NUM_PINS 70
 #define NUM_PWM_PINS 14
 #define NUM_PORTS 11
-#define F_CPU 16000000
+#define F_CPU 16000000L
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------
 // Digital pin registers and constants

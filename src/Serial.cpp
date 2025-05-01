@@ -30,7 +30,7 @@ void send(uint8_t channel, unsigned char data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void printChar(uint8_t channel, char data) {
+void printChar(uint8_t channel, const char data) {
     while (!(UCSR0A & (1<<UDRE0)));
     UDR0 = data;
 }
@@ -38,7 +38,7 @@ void printChar(uint8_t channel, char data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void print(uint8_t channel, char *data) {
+void print(uint8_t channel, const char *data) {
     int i = 0;
     while (data[i] != '\0') {
         // wait for channel to be available
@@ -51,7 +51,7 @@ void print(uint8_t channel, char *data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void println(uint8_t channel, char *data) {
+void println(uint8_t channel, const char *data) {
     print(channel, data);
     send(channel, '\n');
 }

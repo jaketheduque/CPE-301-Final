@@ -7,6 +7,7 @@
 #define TIMER_H
 
 #include <avr/interrupt.h>
+#include <util/delay.h>
 
 #include "MyArduino.h"
 #include "GPIO.h"
@@ -19,11 +20,12 @@
 #define MILLIS_OVF_FRAC_INC ((MICROSECONDS_PER_TIMER0_OVF % 1000) >> 3)
 #define FRACT_MAX (1000 >> 3)
 
-extern volatile unsigned uint64_t timer0_overflow_count;
-extern volatile unsigned uint64_t timer0_millis;
-extern volatile unsigned uint8_t timer0_fract;
+extern volatile uint64_t timer0_overflow_count;
+extern volatile uint64_t timer0_millis;
+extern volatile uint8_t timer0_fract;
 
 void setup_timers();
 uint64_t millis();
+void delay(uint32_t millis);
 
 #endif

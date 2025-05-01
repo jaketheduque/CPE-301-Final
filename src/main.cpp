@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 #include "MyArduino.h"
 #include "GPIO.h"
 #include "Stepper.h"
@@ -15,25 +17,16 @@ void setup() {
 
   // 103 comes from pg. 226
   begin_serial(0, 103);
+
+  sensor.begin();
 }
 
 void loop() {
-  DHT11Data data = sensor.getData();
-  int8_t value = data.int_temp;
-  printChar(0, value);
+  char buffer[32];
+  sprintf(buffer, "Temp: %d - RH: %d", sensor.getTemperature(), sensor.getHumidity());
+  println(0, buffer);
 
-  // while (value > 0) {
-  //   char digit = value % 10;
-
-  //   printChar(0, (digit + 30));
-
-  //   if (value < 10) {
-  //     break;
-  //   }
-
-  //   value /= 10;
-  // }
-  // printChar(0, '\n');
+  delay(1000);
 }
 
 int main() {

@@ -1,16 +1,14 @@
 #include "Timer.h"
 
-volatile unsigned uint64_t timer0_overflow_count = 0;
-volatile unsigned uint64_t timer0_millis = 0;
-volatile unsigned uint8_t timer0_fract = 0;
-
-bool toggle = 1;
+volatile uint64_t timer0_overflow_count = 0;
+volatile uint64_t timer0_millis = 0;
+volatile uint8_t timer0_fract = 0;
 
 ISR(TIMER0_OVF_vect) {
 	// copy these to local variables so they can be stored in registers
 	// (volatile variables must be read from memory on every access)
-	unsigned long m = timer0_millis;
-	unsigned char f = timer0_fract;
+	uint64_t m = timer0_millis;
+	uint8_t f = timer0_fract;
 
 	m += MILLIS_OVF_INC;
 	f += MILLIS_OVF_FRAC_INC;
@@ -34,5 +32,12 @@ void setup_timers() {
 }
 
 uint64_t millis() {
+	return timer0_millis;
+}
 
+void delay(uint32_t duration) {
+	uint64_t start = millis();
+	while (millis() - start < duration) {
+		_delay_us(10);
+	};
 }
