@@ -2,7 +2,7 @@
 
 DHT11::DHT11(uint8_t data_pin) {
     this->_data_pin = data_pin;
-    this->_last_get_time = 0;
+    this->_last_get_time = millis() - MIN_INTERVAL;
     set_pinmode(data_pin, INPUT);
 }
 

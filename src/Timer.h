@@ -26,6 +26,6 @@ extern volatile uint8_t timer0_fract;
 
 void setup_timers();
 uint64_t millis();
-void delay(uint32_t millis);
+void delay(uint32_t duration);
 
 #endif
