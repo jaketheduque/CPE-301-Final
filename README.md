@@ -2,7 +2,7 @@
 This project involves several sensors and motors blah blah blah
 
 # Custom Implementations
-As a personal challenge, I decided to try using *none* of the Arduino or third-party libraries, and instead, write my own.
+As a personal challenge, I decided to try using *none* of the Arduino libraries, and instead, write my own.
 
 ## GPIO
 ### `void set_pinmode(byte pin, byte mode)`
@@ -21,6 +21,8 @@ As a personal challenge, I decided to try using *none* of the Arduino or third-p
 
 ## Timer
 
+## DHT11
+
 ## 1602 Display
 
-## I2C
+## SPI (Real Time Module)

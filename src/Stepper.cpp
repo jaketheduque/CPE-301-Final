@@ -1,6 +1,6 @@
 #include "Stepper.h"
 
-Stepper::Stepper(int steps_per_revolution, byte blue_wire, byte pink_wire, byte yellow_wire, byte orange_wire) {
+Stepper::Stepper(uint32_t steps_per_revolution, uint8_t blue_wire, uint8_t pink_wire, uint8_t yellow_wire, uint8_t orange_wire) {
   this->steps_per_revolution = steps_per_revolution;
   this->step = 0;
   this->blue_wire = blue_wire;
@@ -14,7 +14,7 @@ Stepper::Stepper(int steps_per_revolution, byte blue_wire, byte pink_wire, byte 
   set_pinmode(orange_wire, OUTPUT);
 }
 
-void Stepper::energize_step(byte step) {
+void Stepper::energize_step(uint8_t step) {
   switch (step) {
     case 0:
       digital_write(blue_wire, HIGH);
@@ -63,18 +63,18 @@ void Stepper::ccw_step() {
   energize_step(step);
 }
 
-void Stepper::rotate(int rotations) {
-  int num_steps = abs(rotations * steps_per_revolution);
+void Stepper::rotate(uint32_t rotations) {
+  uint32_t num_steps = abs(rotations * steps_per_revolution);
 
   if (rotations < 0) {
-    for (int i = 0 ; i < num_steps ; i++) {
+    for (uint32_t i = 0 ; i < num_steps ; i++) {
       ccw_step();
-      delay(2); // TODO implement own delay function
+      _delay_ms(2);
     }
   } else if (rotations > 0) {
-    for (int i = 0 ; i < num_steps ; i++) {
+    for (uint32_t i = 0 ; i < num_steps ; i++) {
       cw_step();
-      delay(2);
+      _delay_ms(2);
     }
   }
 }
