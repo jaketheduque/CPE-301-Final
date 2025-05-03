@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <time.h>
 
 #include "MyArduino.h"
 #include "GPIO.h"
@@ -6,6 +7,8 @@
 #include "Timer.h"
 #include "Serial.h"
 #include "DHT11.h"
+#include "I2C.h"
+#include "DS1307.h"
 
 // steps_per_revolution, blue_wire, pink_wire, yellow_wire, orange_wire
 Stepper stepper = Stepper(2048, 4, 5, 6, 7);
@@ -16,16 +19,16 @@ void setup() {
   setup_timers();
 
   // 103 comes from pg. 226
-  begin_serial(0, 103);
+  Serial::begin_serial(0, 103);
 
-  sensor.begin();
+  I2C::begin();
 }
 
 void loop() {
   char buffer[32];
-  sprintf(buffer, "Temp: %d - RH: %d", sensor.getTemperature(), sensor.getHumidity());
-  println(0, buffer);
-
+  tm datetime = DS1307::getDatetime();
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S%z", &datetime);
+  Serial::println(0, buffer);
   delay(1000);
 }
 

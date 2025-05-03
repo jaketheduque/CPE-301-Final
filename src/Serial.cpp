@@ -3,7 +3,7 @@
 /**
  * TODO This still needs to have multiple channel support and baud rate selection added
  */
-void begin_serial(uint8_t channel, uint16_t baud) {
+void Serial::begin_serial(uint8_t channel, uint16_t baud) {
     /* Set baud rate */
     UBRR0H = (unsigned char) (baud>>8);
     UBRR0L = (unsigned char) baud;
@@ -20,7 +20,24 @@ void begin_serial(uint8_t channel, uint16_t baud) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void send(uint8_t channel, unsigned char data) {
+bool Serial::available(uint8_t channel) {
+    return (UCSR0A & (1<<RXC0));
+}
+
+/**
+ * TODO This still needs to have multiple channel support added
+ */
+unsigned char Serial::receive(uint8_t channel) {
+    // wait for channel to be available
+    while (!(UCSR0A & (1<<UDRE0)));
+
+    return UDR0;
+}
+
+/**
+ * TODO This still needs to have multiple channel support added
+ */
+void Serial::send(uint8_t channel, unsigned char data) {
     // wait for channel to be available
     while (!(UCSR0A & (1<<UDRE0)));
 
@@ -30,7 +47,7 @@ void send(uint8_t channel, unsigned char data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void printChar(uint8_t channel, const char data) {
+void Serial::printChar(uint8_t channel, const char data) {
     while (!(UCSR0A & (1<<UDRE0)));
     UDR0 = data;
 }
@@ -38,7 +55,7 @@ void printChar(uint8_t channel, const char data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void print(uint8_t channel, const char *data) {
+void Serial::print(uint8_t channel, const char *data) {
     int i = 0;
     while (data[i] != '\0') {
         // wait for channel to be available
@@ -51,7 +68,7 @@ void print(uint8_t channel, const char *data) {
 /**
  * TODO This still needs to have multiple channel support added
  */
-void println(uint8_t channel, const char *data) {
+void Serial::println(uint8_t channel, const char *data) {
     print(channel, data);
     send(channel, '\n');
 }
