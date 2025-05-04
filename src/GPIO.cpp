@@ -14,7 +14,7 @@ void set_pinmode(uint8_t pin, uint8_t mode) {
 }
 
 void digital_write(uint8_t pin, uint8_t value) {
-  if (value == HIGH) {
+  if (value != LOW) {
     *port[port_mappings[pin]] |= (1 << pin_mappings[pin]);
   } else {
     *port[port_mappings[pin]] &= ~(1 << pin_mappings[pin]);
