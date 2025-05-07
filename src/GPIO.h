@@ -1,7 +1,10 @@
 #ifndef GPIO_H
 #define GPIO_H
 
+#include <stdio.h>
 #include <avr/io.h>
+
+#include "Serial.h"
 #include "MyArduino.h"
 
 extern bool analog_ready;

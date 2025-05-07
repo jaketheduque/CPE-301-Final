@@ -23,7 +23,7 @@ class Stepper {
     Stepper(uint32_t steps_per_revolution, uint8_t blue_wire, uint8_t pink_wire, uint8_t yellow_wire, uint8_t orange_wire);
     void cw_step();
     void ccw_step();
-    void rotate(uint32_t rotations);
+    void rotate(int32_t rotations);
 };
 
 #endif

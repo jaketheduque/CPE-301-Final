@@ -107,7 +107,7 @@ void Display::set_cursor(uint8_t row, uint8_t col) {
 }
 
 void Display::print(const char *data) {
-    for (int i = 0 ; i < strlen(data) ; i++) {
+    for (uint8_t i = 0 ; i < strlen(data) ; i++) {
         print_char(data[i]);
     }
 }

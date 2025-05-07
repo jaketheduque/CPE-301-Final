@@ -63,7 +63,7 @@ void Stepper::ccw_step() {
   energize_step(step);
 }
 
-void Stepper::rotate(uint32_t rotations) {
+void Stepper::rotate(int32_t rotations) {
   uint32_t num_steps = abs(rotations * steps_per_revolution);
 
   if (rotations < 0) {
