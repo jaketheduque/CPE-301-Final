@@ -29,9 +29,10 @@ enum State {
 #define POT_CHANNEL 0
 #define WATER_SENSOR_CHANNEL 1
 
-
 #define TEMP_THRESHOLD 25
-#define WATER_LEVEL_THRESHOLD 25
+#define WATER_LEVEL_THRESHOLD 50
+#define MIN_STEPPER_ROTATION 0.1
+#define DEBOUNCE_TIME 50
 
 #define DISPLAY_UPDATE_INTERVAL ((uint64_t) (60L * 1000L))
 
@@ -54,17 +55,21 @@ void action_current_state();
 void update_vent_position();
 
 ISR(INT4_vect) {
-  if (water_sensor.read() >= WATER_LEVEL_THRESHOLD) {
-    if (current_state == ERROR) {
-      current_state = IDLE;
-    } else if (current_state == DISABLED) {
-      current_state = IDLE;
+  static uint64_t last_interrupt_time = 0;
+  if (millis() - last_interrupt_time > DEBOUNCE_TIME) {
+    if (water_sensor.read() >= WATER_LEVEL_THRESHOLD) {
+      if (current_state == ERROR) {
+        current_state = IDLE;
+      } else if (current_state == DISABLED) {
+        current_state = IDLE;
+      } else {
+        current_state = DISABLED;
+      }
     } else {
-      current_state = DISABLED;
+      current_state = ERROR;
     }
-  } else {
-    current_state = ERROR;
   }
+  last_interrupt_time = millis();
 }
 
 void setup() {
@@ -77,8 +82,7 @@ void setup() {
   display.init();
   analog_init();
 
-  // enable rising edge interrupt for digital pin 2
-  sbi(EICRB, ISC40);
+  // enable falling edge interrupt for digital pin 2
   sbi(EICRB, ISC41);
   sbi(EIMSK, INT4);
 
@@ -87,15 +91,17 @@ void setup() {
   set_pinmode(RED_LED, OUTPUT);
   set_pinmode(YELLOW_LED, OUTPUT);
   set_pinmode(GREEN_LED, OUTPUT);
+  set_pinmode(RESET_BUTTON, INPUT_PULLUP);
 
   // start off in IDLE
   digital_write(GREEN_LED, HIGH);
 }
 
 void loop() {
+  update_current_state();
+  action_current_state();
+
   if (current_state == IDLE || current_state == RUNNING) {
-    update_current_state();
-    action_current_state();
     update_vent_position();
 
     // print humidity and temperature
@@ -143,22 +149,22 @@ void update_current_temp_humidity() {
 }
 
 void update_current_state() {
-  // disable interrupts so that reset button cannot change state while this function is running
-  cli();
-
-  if (water_sensor.read() < WATER_LEVEL_THRESHOLD) {
+  if (current_state == DISABLED || current_state == ERROR) {
+    return;
+  } else if (water_sensor.read() < WATER_LEVEL_THRESHOLD) {
     current_state = ERROR;
   } else if (sensor.getTemperature() >= TEMP_THRESHOLD) {
     current_state = RUNNING;
   } else {
     current_state = IDLE;
   }
-
-  // reenable interrupts
-  sei();
 }
 
 void action_current_state() {
+  if (current_state == last_state_actioned) {
+    return;
+  }
+
   switch (current_state) {
     case ERROR:
       Serial::println(0, prepend_time("State changed to ERROR"));
@@ -191,6 +197,8 @@ void action_current_state() {
 
       break;
     case IDLE:
+      Serial::println(0, prepend_time("State changed to IDLE"));
+
       digital_write(YELLOW_LED, LOW);
       digital_write(RED_LED, LOW);
       digital_write(BLUE_LED, LOW);
@@ -221,7 +229,10 @@ void action_current_state() {
 
 void update_vent_position() {
   uint8_t pot_value = analog_read(POT_CHANNEL);
-  float new_vent_position = ((float) pot_value / 255);
-  stepper.rotate(new_vent_position - current_vent_position);
-  current_vent_position = new_vent_position;
+  float new_vent_position = ((float) pot_value / (float) 255);
+
+  if (fabs(new_vent_position - current_vent_position) > MIN_STEPPER_ROTATION) {
+    stepper.rotate(new_vent_position - current_vent_position);
+    current_vent_position = new_vent_position;
+  }
 }
