@@ -55,7 +55,7 @@ void Display::send_instruction(uint8_t data) {
     enable();
 }
 
-void Display::print_char(uint8_t data) {
+void Display::print_char(const uint8_t data) {
     _delay_ms(5);
 
     digital_write(rs, 1);

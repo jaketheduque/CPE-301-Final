@@ -1,8 +1,8 @@
 # CPE 301 - Final Project
-This project involves several sensors and motors blah blah blah
+The water cooler created in this project aims to reduce ambient air temperature using evaporative cooling. To achieve this, the cooler uses a push button, potentiometer, LEDs, water sensor, fan motor, stepper motor, temperature/humidity sensor, real-time module, and a display. The video demonstration can be found [here](https://youtu.be/OoSIE_4rT5M), and the `report.pdf` file contains more general information on how the cooler works at a higher level.
 
 # Custom Implementations
-As a personal challenge, I decided to try using *none* of the Arduino libraries, and instead, write my own. Not all functions are listed below, only the ones containing important functionality.
+As a personal challenge, I decided to try using *none* of the Arduino libraries, and instead, write my own implementations for all components of this project. Not all functions are listed below, only the ones containing important functionality.
 
 ## GPIO
 ### `void set_pinmode(uint8_t pin, uint8_t mode)`
@@ -61,5 +61,40 @@ Requests a 40-bit packet from the DHT11 sensor and parses the information receiv
 **Note:** The checksum value is retreived from the sensor, but no logic is currently in place to check for errors in the packet.
 
 ## 1602 Display
+### `void send_instruction(uint8_t data)`
+Sends an 8-bit instruction to the display by setting the register select line LOW, setting the 8 data lines according to the `data` parameter, and then toggling the enable line.
 
-## SPI (Real Time Module)
+### `void set_cursor(uint8_t row, uint8_t col)`
+Moves the display cursor to the specificed row and column by sending either a `0x80 | col` instruction for the first row, or a `0xC0 | col` instruction for the second row.
+
+### `void print_char(uint8_t data)`
+Prints a single character to the display at the current cursor position. This is done by setting the register select line HIGH, setting the 8 data lines according to the `data` parameter, and toggling the enable line.
+
+### `print(const char *data)`
+Prints every character in the provided `data` string to the display using the `print_char` fuction.
+
+### `void clear()`
+Clears all data currently on the screen and also resets the cursor position to (0,0) by sending a `0x01` instruction using `send_instruction`.
+
+## I2C
+The ATMega2560 microprocessor used in this project has a built-in Two-Wire Interface (TWI) which can be configured for I2C communication. The functions below configure and coordinate I2C communication using the TWI module and its associated registers.
+
+### `void begin()`
+Initializes the TWI module on the ATMega2560 processor with a ~30kHz bit rate.
+
+### `void start(uint8_t addr)`
+Starts communication with a single slave device on the I2C bus in read or write mode (depending on bit 7 in the `addr` parameter).
+
+### `void send_byte(uint8_t data)`
+Sends a byte of data to the slave device currently being communicated with, and then waits for the acknowledgment from the device.
+
+### `void send_data(uint8_t *data, uint8_t len)`
+Sends a sequence of bytes, utilizing the `sendByte` function in a loop until `len` bytes have been sent.
+
+### `uint8_t receive_byte()`
+Receives a byte of data from the slave device currently being communicated with.
+
+**Note:** Functions `repeat_start` and `receive_last_byte` are also implemented, since there are minor differences in the data sent between data sent at the beginning and the last byte data (ex. after receiving the last byte, a NACK must be sent over the SDA line instead of a ACK)
+
+## DS1307 Module
+The DS1307 RTC module communicates over I2C, and the functions below utilize the custom I2C library to handle the bulk of I2C communication nuances.

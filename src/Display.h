@@ -20,7 +20,7 @@ class Display {
 
         void enable();
         void send_instruction(uint8_t data);
-        void print_char(uint8_t data);
+        void print_char(const uint8_t data);
     public:
         Display(uint8_t rs, uint8_t en, uint8_t db0, uint8_t db1, uint8_t db2, uint8_t db3, uint8_t db4, uint8_t db5, uint8_t db6, uint8_t db7);
 

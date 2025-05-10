@@ -51,7 +51,8 @@ void I2C::sendByte(uint8_t data) {
     while (!(TWCR & (1<<TWINT)));
 }
 
-void I2C::sendData(uint8_t *data, uint8_t len) {
+
+ {
     for (int i = 0 ; i < len ; i++) {
         sendByte(data[i]);
     }
