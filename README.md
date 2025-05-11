@@ -98,3 +98,11 @@ Receives a byte of data from the slave device currently being communicated with.
 
 ## DS1307 Module
 The DS1307 RTC module communicates over I2C, and the functions below utilize the custom I2C library to handle the bulk of I2C communication nuances.
+
+### `tm DS1307::getDatetime()`
+Returns a `tm` with the current time on the DS1307 module. The process starts by setting the DS1307 register pointer to `0x00` which contains the current seconds. Each byte of data retreived from the DS1307 automatically moves the register pointer forward to the next register. As each time place (seconds, minutes, hours, etc.) is retreived, the corresponding field in the `tm` struct is set, and after all fields have been filled, the `tm` struct is returned.
+
+**Note:** This should probably be changed to take in a `tm` pointer as a parameter to prevent funky scope issues.
+
+### `void setDateTime(char input[20])`
+Takes in a ISO8601 formatted string (YYYY-MM-DDTHH-mm-ss) and sets the DS1307 date registers to change the current time on the module. Similar to when reading time from the DS1307, when a byte is written to a register, the register pointer is automatically incremented to the next register after each write.
